@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#242729"
+    android:id="@+id/splash_background" >
+
+  <ImageView
+      android:layout_width="250dp"
+      android:layout_height="250dp"
+      android:id="@+id/rocket_img"
+      android:background="@mipmap/rocket_icon_512x512"
+      android:layout_marginStart="130dp"
+      android:layout_centerVertical="true"
+      />
+  <TextView
+      android:id="@+id/splash_title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Portfolio Project"
+      android:textSize="45sp"
+      android:textColor="@color/white"
+      android:textStyle="bold"
+      android:fontFamily="serif"
+      android:layout_alignBottom="@id/rocket_img"
+      android:layout_centerInParent="true"
+      android:layout_marginBottom="20dp"
+      />
+
+</RelativeLayout>
