@@ -17,8 +17,9 @@ import android.widget.TextView;
 /**
  * Created by Ilya on 11/2/2016.
  */
-public class SplashScreen  extends Activity {
+public class SplashScreen extends Activity {
     Thread splashTread;
+    public static final long LIFE_TIME = 0;
 
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -27,16 +28,18 @@ public class SplashScreen  extends Activity {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
         StartAnimations();
     }
+
     private void StartAnimations() {
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.alpha);
         anim.reset();
-        RelativeLayout l=(RelativeLayout) findViewById(R.id.splash_background);
+        RelativeLayout l = (RelativeLayout) findViewById(R.id.splash_background);
         l.clearAnimation();
         l.startAnimation(anim);
 
@@ -46,31 +49,33 @@ public class SplashScreen  extends Activity {
         iv.setVisibility(View.INVISIBLE);
         iv.clearAnimation();
         new Handler().postDelayed(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 iv.setVisibility(View.VISIBLE);
                 iv.startAnimation(rocketAnim);
             }
-        },1000);
+        }, 1000);
 
         final Animation titleAnim = AnimationUtils.loadAnimation(this, R.anim.title_trans);
         anim.reset();
-        final TextView title_tv= (TextView) findViewById(R.id.splash_title);
+        final TextView title_tv = (TextView) findViewById(R.id.splash_title);
         title_tv.setVisibility(View.INVISIBLE);
         title_tv.clearAnimation();
         new Handler().postDelayed(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 title_tv.setVisibility(View.VISIBLE);
                 title_tv.startAnimation(titleAnim);
             }
-        },1500);
+        }, 1500);
 
         splashTread = new Thread() {
             @Override
             public void run() {
                 try {
-                   sleep(5500);
+                    sleep(LIFE_TIME);
                     Intent intent = new Intent(SplashScreen.this,
-                        MainActivity.class);
+                            MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(intent);
                     SplashScreen.this.finish();
