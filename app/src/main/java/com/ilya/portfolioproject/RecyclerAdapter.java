@@ -13,11 +13,11 @@ import java.util.List;
  * Created by Ilya on 11/4/2016.
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    List<Photo> photoList;
-    ImageLoader imageLoader;
+    private List<ArticlesItem> articlesItemList;
+    private ImageLoader imageLoader;
 
-    public RecyclerAdapter(Context context, List<Photo> photos) {
-        photoList = photos;
+    public RecyclerAdapter(Context context, List<ArticlesItem> photos) {
+        articlesItemList = photos;
         imageLoader = new ImageLoader(context);
     }
 
@@ -33,12 +33,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        imageLoader.DisplayImage(photoList.get(position).getSource(), ((PhotoViewHolder) holder).photoImage);
+        imageLoader.DisplayImage(articlesItemList.get(position).source, ((PhotoViewHolder) holder).photoImage);
     }
 
     @Override
     public int getItemCount() {
-        return photoList.size();
+        return articlesItemList.size();
     }
 
     private class PhotoViewHolder extends RecyclerView.ViewHolder {

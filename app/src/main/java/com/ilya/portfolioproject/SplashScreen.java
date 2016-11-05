@@ -19,7 +19,7 @@ import android.widget.TextView;
  */
 public class SplashScreen extends Activity {
     Thread splashTread;
-    public static final long LIFE_TIME = 0;
+    public static final long LIFE_TIME = 5500;
 
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
