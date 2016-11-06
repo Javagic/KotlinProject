@@ -1,4 +1,4 @@
-package com.ilya.portfolioproject;
+package com.ilya.portfolioproject.Utils;
 
 import java.io.InputStream;
 import java.io.OutputStream;

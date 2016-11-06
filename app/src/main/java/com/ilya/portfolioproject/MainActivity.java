@@ -1,52 +1,34 @@
 package com.ilya.portfolioproject;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ListView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class MainActivity extends AppCompatActivity {
-    public static final String WEB_SITE_URL = "http://www.vestifinance.ru/";
+    public static final String WEB_SITE_URL = "http://www.vestifinance.ru/articles";
     RecyclerView recyclerView;
     RecyclerAdapter recyclerAdapter;
     ProgressDialog mProgressDialog;
@@ -76,40 +58,52 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             photoList = new ArrayList<ArticlesItem>();
-            Call<ResponseBody> requestBodyCall = getAuthenticationService().getArticles();
-            requestBodyCall.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful()) {
-                        try {
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
-                            result = new StringBuffer();
-                            String line;
-                            while ((line = reader.readLine()) != null) {
-                                result.append(line);
-                            }
-                            Document doc = Jsoup.parse(result.toString());
-                            Elements img = doc.getElementsByClass("Main");
+            Document doc = null;
+            try {
+                doc = Jsoup.connect(WEB_SITE_URL).get();
+                Elements img = doc.getElementsByClass("Main");
 
-                            for (Element el : img) {
-                                String title = el.getElementsByClass("Title").text();
-                                String date = el.getElementsByClass("Date").text();
-                                String description = el.getElementsByClass("Desc").text();
-                                String src = el.select("img").attr("src");
-                                String rubrics = el.getElementsByClass("Rubrics").text();
-                                photoList.add(new ArticlesItem(title,date,description,src,rubrics));
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                for (Element el : img) {
+                    String title = el.getElementsByClass("Title").text();
+                    String date = el.getElementsByClass("Date").text();
+                    String description = el.getElementsByClass("Desc").text();
+                    String src = el.select("img").attr("src");
+                    String rubrics = el.getElementsByClass("Rubrics").text();
+                    photoList.add(new ArticlesItem(title,date,description,src,rubrics));
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });
+//            Call<ResponseBody> requestBodyCall = getAuthenticationService().getArticles();
+//            try {
+//                requestBodyCall.execute().body();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            requestBodyCall.enqueue(new Callback<ResponseBody>() {
+//                @Override
+//                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                    if (response.isSuccessful()) {
+//                        try {
+//                            BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
+//                            result = new StringBuffer();
+//                            String line;
+//                            while ((line = reader.readLine()) != null) {
+//                                result.append(line);
+//                            }
+
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                    t.printStackTrace();
+//                }
+//            });
             return null;
         }
 
@@ -131,8 +125,18 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-            recyclerAdapter = new RecyclerAdapter(MainActivity.this, photoList);
+            recyclerAdapter = new RecyclerAdapter(MainActivity.this, photoList, new RecyclerAdapter.OnRecycleCallback() {
+                @Override
+                public void onItemSelect(int position) {
+                    Intent intent = new Intent(MainActivity.this, SlideScreenActivity.class);
+                    intent.putExtra("name",position);
+                    startActivity(intent);
+                }
+            });
+
             recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+            Drawable divider = ContextCompat.getDrawable(MainActivity.this,R.drawable.item_divider_bottom);
+            recyclerView.addItemDecoration(new ItemDecorator(divider));
             recyclerView.setAdapter(recyclerAdapter);
             mProgressDialog.dismiss();
 //            new Handler().postDelayed(new Runnable() {

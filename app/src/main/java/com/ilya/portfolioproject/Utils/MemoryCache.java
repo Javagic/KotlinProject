@@ -1,4 +1,4 @@
-package com.ilya.portfolioproject;
+package com.ilya.portfolioproject.Utils;
 
 import android.graphics.Bitmap;
 import android.util.Log;

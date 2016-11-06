@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.ilya.portfolioproject.Utils.ImageLoader;
 
 import java.util.List;
 
@@ -15,10 +18,12 @@ import java.util.List;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ArticlesItem> articlesItemList;
     private ImageLoader imageLoader;
+    public OnRecycleCallback onRecycleCallback;
 
-    public RecyclerAdapter(Context context, List<ArticlesItem> photos) {
+    public RecyclerAdapter(Context context, List<ArticlesItem> photos, OnRecycleCallback onRecycleCallback) {
         articlesItemList = photos;
         imageLoader = new ImageLoader(context);
+        this.onRecycleCallback=onRecycleCallback;
     }
 
 
@@ -27,13 +32,26 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         View v;
         v = LayoutInflater.from(parent.getContext()).inflate(R.layout.i_photos, parent, false);
         PhotoViewHolder vh = new PhotoViewHolder(v);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
         return vh;
     }
 
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        imageLoader.DisplayImage(articlesItemList.get(position).source, ((PhotoViewHolder) holder).photoImage);
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        imageLoader.DisplayImage(articlesItemList.get(position).source, ((PhotoViewHolder) holder).itemPhoto);
+        ((PhotoViewHolder) holder).itemTitle.setText(articlesItemList.get(position).title);
+        ((PhotoViewHolder) holder).itemDate.setText(articlesItemList.get(position).date);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRecycleCallback.onItemSelect(holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -42,15 +60,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private class PhotoViewHolder extends RecyclerView.ViewHolder {
-        ImageView photoImage;
-
+        ImageView itemPhoto;
+        TextView itemTitle;
+        TextView itemDate;
         public PhotoViewHolder(View itemLayoutView) {
             super(itemLayoutView);
-            photoImage = (ImageView) itemLayoutView.findViewById(R.id.photo_image);
+            itemPhoto = (ImageView) itemLayoutView.findViewById(R.id.photo_image);
+            itemDate = (TextView) itemLayoutView.findViewById(R.id.item_date);
+            itemTitle = (TextView) itemLayoutView.findViewById(R.id.item_title);
         }
     }
 
     public interface OnRecycleCallback {
-
+        public void onItemSelect(int position);
     }
 }

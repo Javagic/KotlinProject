@@ -1,14 +1,13 @@
-package com.ilya.portfolioproject;
+package com.ilya.portfolioproject.Utils;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.ImageView;
 
-import java.io.ByteArrayOutputStream;
+import com.ilya.portfolioproject.R;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,7 +18,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
@@ -86,7 +84,7 @@ public class ImageLoader {
             conn.disconnect();
             is.close();
 //        Bitmap b = decodeFile(file);
-            Log.i("ImageLoader",String.valueOf( bitmap.getRowBytes() * bitmap.getHeight()));//bytes
+            bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2, bitmap.getHeight()*2, false);
             return bitmap;
         } catch (Throwable ex) {
             ex.printStackTrace();

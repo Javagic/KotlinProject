@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/white"
     android:layout_height="wrap_content">
 
     <ImageView
-        android:layout_gravity="center"
         android:id="@+id/photo_image"
-        android:src="@mipmap/rocket_icon_512x512"
-        android:layout_width="400dp"
-        android:layout_height="400dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp"
+        android:src="@mipmap/ic_launcher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         />
-</FrameLayout>
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/photo_image"
+        android:text="Title"
+        android:textSize="25dp"
+        />
+    <TextView
+        android:id="@+id/item_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/photo_image"
+        android:textColor="@color/gray400"
+        android:layout_below="@+id/item_title"
+        android:text="Date"
+        />
+</RelativeLayout>
