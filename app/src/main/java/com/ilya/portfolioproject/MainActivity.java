@@ -14,6 +14,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerAdapter recyclerAdapter;
     ProgressDialog mProgressDialog;
-    List<ArticlesItem> photoList;
+    List<ArticlesItem> articlesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            photoList = new ArrayList<ArticlesItem>();
+            articlesList = new ArrayList<ArticlesItem>();
             Document doc = null;
             try {
                 doc = Jsoup.connect(WEB_SITE_URL).get();
@@ -69,8 +70,9 @@ public class MainActivity extends AppCompatActivity {
                     String description = el.getElementsByClass("Desc").text();
                     String src = el.select("img").attr("src");
                     String rubrics = el.getElementsByClass("Rubrics").text();
-                    photoList.add(new ArticlesItem(title,date,description,src,rubrics));
+                    articlesList.add(new ArticlesItem(title,date,description,src,rubrics));
                 }
+                for(int i=0;i<6;i++) articlesList.remove(articlesList.size()-1);//потому что кто-то криво верстает
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -125,11 +127,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-            recyclerAdapter = new RecyclerAdapter(MainActivity.this, photoList, new RecyclerAdapter.OnRecycleCallback() {
+            recyclerAdapter = new RecyclerAdapter(MainActivity.this, articlesList, new RecyclerAdapter.OnRecycleCallback() {
                 @Override
                 public void onItemSelect(int position) {
                     Intent intent = new Intent(MainActivity.this, SlideScreenActivity.class);
-                    intent.putExtra("name",position);
+                    intent.putExtra("articles", Parcels.wrap(articlesList));
                     startActivity(intent);
                 }
             });

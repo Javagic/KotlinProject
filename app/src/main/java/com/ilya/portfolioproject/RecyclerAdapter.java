@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ilya.portfolioproject.Utils.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -17,12 +17,12 @@ import java.util.List;
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ArticlesItem> articlesItemList;
-    private ImageLoader imageLoader;
+    Context context;
     public OnRecycleCallback onRecycleCallback;
 
     public RecyclerAdapter(Context context, List<ArticlesItem> photos, OnRecycleCallback onRecycleCallback) {
         articlesItemList = photos;
-        imageLoader = new ImageLoader(context);
+        this.context=context;
         this.onRecycleCallback=onRecycleCallback;
     }
 
@@ -43,7 +43,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        imageLoader.DisplayImage(articlesItemList.get(position).source, ((PhotoViewHolder) holder).itemPhoto);
+        Picasso.with(context).load(articlesItemList.get(position).imageUrl).resize(60,48).into(((PhotoViewHolder) holder).itemPhoto);
         ((PhotoViewHolder) holder).itemTitle.setText(articlesItemList.get(position).title);
         ((PhotoViewHolder) holder).itemDate.setText(articlesItemList.get(position).date);
         holder.itemView.setOnClickListener(new View.OnClickListener() {

@@ -8,22 +8,34 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
+import com.ilya.portfolioproject.Utils.ScreenSlidePagerAdapter;
+
+import org.parceler.Parcels;
+
+import java.util.List;
+
 /**
  * Created by Ilya on 11/6/2016.
  */
 public class SlideScreenActivity extends FragmentActivity {
 
-    private static final int NUM_PAGES = 5;
+    List<ArticlesItem> articlesList;
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
+
+//    public static Intent intent(Context context, int deviceId) {
+//        Intent intent = new Intent(context, SongListActivity.class);
+//        intent.putExtra(EXTRA_ALARM_ID, deviceId);
+//        return intent;
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_screen);
-
+        articlesList = Parcels.unwrap(getIntent().getParcelableExtra("articles"));
         mPager = (ViewPager) findViewById(R.id.pager);
-        mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(),articlesList);
         mPager.setAdapter(mPagerAdapter);
     }
 
@@ -39,19 +51,5 @@ public class SlideScreenActivity extends FragmentActivity {
         }
     }
 
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-        public ScreenSlidePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
 
-        @Override
-        public Fragment getItem(int position) {
-            return new SlidePageFragment();
-        }
-
-        @Override
-        public int getCount() {
-            return NUM_PAGES;
-        }
-    }
 }
