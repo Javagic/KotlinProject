@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.ilya.portfolioproject.Utils.Constants;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -29,7 +31,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * status bar and navigation/system bar) with user interaction.
  */
 public class MainActivity extends AppCompatActivity {
-    public static final String WEB_SITE_URL = "http://www.vestifinance.ru/articles";
     RecyclerView recyclerView;
     RecyclerAdapter recyclerAdapter;
     ProgressDialog mProgressDialog;
@@ -61,16 +62,17 @@ public class MainActivity extends AppCompatActivity {
             articlesList = new ArrayList<ArticlesItem>();
             Document doc = null;
             try {
-                doc = Jsoup.connect(WEB_SITE_URL).get();
-                Elements img = doc.getElementsByClass("Main");
+                doc = Jsoup.connect(Constants.ARTICLES_LIST).get();
+                Elements articlesElements = doc.getElementsByClass("Main");
 
-                for (Element el : img) {
+                for (Element el : articlesElements) {
                     String title = el.getElementsByClass("Title").text();
+                    String id = el.getElementsByClass("Title").select("a").attr("href");
                     String date = el.getElementsByClass("Date").text();
                     String description = el.getElementsByClass("Desc").text();
                     String src = el.select("img").attr("src");
                     String rubrics = el.getElementsByClass("Rubrics").text();
-                    articlesList.add(new ArticlesItem(title,date,description,src,rubrics));
+                    articlesList.add(new ArticlesItem(title,date,description,src,rubrics, id));
                 }
                 for(int i=0;i<6;i++) articlesList.remove(articlesList.size()-1);//потому что кто-то криво верстает
             } catch (IOException e) {
@@ -112,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         public Retrofit getRetrofit() {
             if (mRetrofit == null) {
                 return new Retrofit.Builder()
-                        .baseUrl(WEB_SITE_URL)
+                        .baseUrl(Constants.ARTICLES_LIST)
                         .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();

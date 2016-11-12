@@ -2,6 +2,7 @@ package com.ilya.portfolioproject;
 
 import android.databinding.BindingAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -12,29 +13,42 @@ import org.parceler.Parcel;
  */
 @Parcel
 public class ArticlesItem {
-    String title;
-    String date;
-    String description;
-    String rubrics;
-    String imageUrl;
+    public String title;
+    public String date;
+    public String description;
+    public String rubrics;
+    public String imageUrl;
+    public String idLink;//*/articles/xxxx
+    public String mainText;
+    public String mainImage;
 
-    public ArticlesItem(){}
+    public ArticlesItem() {
+    }
 
-    public ArticlesItem(String title, String date, String description, String imageUrl, String rubrics) {
+    public ArticlesItem(String title, String date, String description, String imageUrl, String rubrics, String id) {
         this.title = title;
         this.date = date;
         this.description = description;
         this.imageUrl = imageUrl;
         this.rubrics = rubrics;
+        this.idLink = id;
     }
 
-    @BindingAdapter({"bind:imageUrl"})
-    public static void loadImage(ImageView view, String imageUrl) {
+    @BindingAdapter({"bind:mainImage"})
+    public static void loadImage(ImageView view, String mainImage) {
         Picasso.with(view.getContext())
-                .load(imageUrl)
+                .load(mainImage)
                 .placeholder(R.drawable.example)
                 .fit()
                 .into(view);
+    }
+
+    public String getIdLink() {
+        return idLink;
+    }
+
+    public String getMainText() {
+        return mainText;
     }
 
     public String getImageUrl() {
@@ -57,4 +71,17 @@ public class ArticlesItem {
         return rubrics;
     }
 
+    @BindingAdapter({"bind:mainText"})
+    public static void loadImage(TextView view, String mainText) {
+        if (mainText != null && !mainText.isEmpty()) {
+            view.setText(mainText);
+            return;
+        }
+
+    }
+
+
+    public interface OnArticleItemCallback {
+        public void onDataLoaded();
+    }
 }

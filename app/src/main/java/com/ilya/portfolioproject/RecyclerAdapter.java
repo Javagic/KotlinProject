@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ArticlesItem> articlesItemList;
-    Context context;
+    Context context;//TODO будут ли утечки?
     public OnRecycleCallback onRecycleCallback;
 
     public RecyclerAdapter(Context context, List<ArticlesItem> photos, OnRecycleCallback onRecycleCallback) {
