@@ -36,7 +36,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by Ilya on 11/6/2016.
  */
-public class SlidePageFragment extends Fragment implements ArticlesItem.OnArticleItemCallback{
+public class SlidePageFragment extends Fragment{
      ArticlesItem articlesItem;
     private FSlidePageBinding binding;
     @Override
@@ -59,10 +59,6 @@ public class SlidePageFragment extends Fragment implements ArticlesItem.OnArticl
         new RemoteDataTask().execute();
     }
 
-    @Override
-    public void onDataLoaded() {
-
-    }
     private class RemoteDataTask extends AsyncTask<Void, Void, Void> {
 
         @Override

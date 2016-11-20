@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
 
     <data>
-
         <variable
             name="article"
             type="com.ilya.portfolioproject.ArticlesItem" />
     </data>
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/content"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

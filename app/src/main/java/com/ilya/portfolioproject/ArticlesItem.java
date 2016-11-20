@@ -17,7 +17,7 @@ public class ArticlesItem {
     public String date;
     public String description;
     public String rubrics;
-    public String imageUrl;
+    public String previewImage;
     public String idLink;//*/articles/xxxx
     public String mainText;
     public String mainImage;
@@ -25,11 +25,11 @@ public class ArticlesItem {
     public ArticlesItem() {
     }
 
-    public ArticlesItem(String title, String date, String description, String imageUrl, String rubrics, String id) {
+    public ArticlesItem(String title, String date, String description, String previewImage, String rubrics, String id) {
         this.title = title;
         this.date = date;
         this.description = description;
-        this.imageUrl = imageUrl;
+        this.previewImage = previewImage;
         this.rubrics = rubrics;
         this.idLink = id;
     }
@@ -43,6 +43,15 @@ public class ArticlesItem {
                 .into(view);
     }
 
+    @BindingAdapter({"bind:previewImage"})
+    public static void previewImage(ImageView view, String previewImage) {
+        Picasso.with(view.getContext())
+                .load(previewImage)
+                .placeholder(R.drawable.example)
+                .fit()
+                .into(view);
+    }
+
     public String getIdLink() {
         return idLink;
     }
@@ -51,8 +60,8 @@ public class ArticlesItem {
         return mainText;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getPreviewImage() {
+        return previewImage;
     }
 
     public String getTitle() {
@@ -81,7 +90,4 @@ public class ArticlesItem {
     }
 
 
-    public interface OnArticleItemCallback {
-        public void onDataLoaded();
-    }
 }
