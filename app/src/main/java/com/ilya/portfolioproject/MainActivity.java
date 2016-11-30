@@ -33,124 +33,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerAdapter recyclerAdapter;
-    ProgressDialog mProgressDialog;
     List<ArticlesItem> articlesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new RemoteDataTask().execute();
+        new DataLoader().execute();
     }
-
-    private class RemoteDataTask extends AsyncTask<Void, Void, Void> {
-        Retrofit mRetrofit;
-        private StringBuffer result = null;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mProgressDialog = new ProgressDialog(MainActivity.this);
-            mProgressDialog.setTitle("Parse.com Custom ListView Tutorial");
-            mProgressDialog.setMessage("Loading...");
-            mProgressDialog.setIndeterminate(false);
-            mProgressDialog.show();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            articlesList = new ArrayList<ArticlesItem>();
-            Document doc = null;
-            try {
-                doc = Jsoup.connect(Constants.ARTICLES_LIST).get();
-                Elements articlesElements = doc.getElementsByClass("Main");
-
-                for (Element el : articlesElements) {
-                    String title = el.getElementsByClass("Title").text();
-                    String id = el.getElementsByClass("Title").select("a").attr("href");
-                    String date = el.getElementsByClass("Date").text();
-                    String description = el.getElementsByClass("Desc").text();
-                    String src = el.select("img").attr("src");
-                    String rubrics = el.getElementsByClass("Rubrics").text();
-                    articlesList.add(new ArticlesItem(title,date,description,src,rubrics, id));
-                }
-                for(int i=0;i<6;i++) articlesList.remove(articlesList.size()-1);//потому что кто-то криво верстает
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-//            Call<ResponseBody> requestBodyCall = getAuthenticationService().getArticles();
-//            try {
-//                requestBodyCall.execute().body();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            requestBodyCall.enqueue(new Callback<ResponseBody>() {
-//                @Override
-//                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                    if (response.isSuccessful()) {
-//                        try {
-//                            BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
-//                            result = new StringBuffer();
-//                            String line;
-//                            while ((line = reader.readLine()) != null) {
-//                                result.append(line);
-//                            }
-
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                    t.printStackTrace();
-//                }
-//            });
-            return null;
-        }
-
-        public Retrofit getRetrofit() {
-            if (mRetrofit == null) {
-                return new Retrofit.Builder()
-                        .baseUrl(Constants.ARTICLES_LIST)
-                        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-            }
-            return mRetrofit;
-        }
-
-        public VestiService getAuthenticationService() {
-            return getRetrofit().create(VestiService.class);
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-            recyclerAdapter = new RecyclerAdapter(MainActivity.this, articlesList, new RecyclerAdapter.OnRecycleCallback() {
-                @Override
-                public void onItemSelect(int position) {
-                    Intent intent = new Intent(MainActivity.this, SlideScreenActivity.class);
-                    intent.putExtra("articles", Parcels.wrap(articlesList));
-                    startActivity(intent);
-                }
-            });
-
-            recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-            Drawable divider = ContextCompat.getDrawable(MainActivity.this,R.drawable.item_divider_bottom);
-            recyclerView.addItemDecoration(new ItemDecorator(divider));
-            recyclerView.setAdapter(recyclerAdapter);
-            mProgressDialog.dismiss();
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    recyclerAdapter.imageLoader.clearCache();
-//                }
-//            },5000);
-        }
-    }
-
-
 }

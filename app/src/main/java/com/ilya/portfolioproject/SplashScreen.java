@@ -1,7 +1,9 @@
 package com.ilya.portfolioproject;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,10 +16,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ilya.portfolioproject.databinding.ActivitySplashscreenBinding;
+
 /**
  * Created by Ilya on 11/2/2016.
  */
 public class SplashScreen extends Activity {
+    ActivitySplashscreenBinding binding;
     Thread splashTread;
     public static final long LIFE_TIME = 0;
 
@@ -32,7 +37,7 @@ public class SplashScreen extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splashscreen);
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_splashscreen);
         StartAnimations();
     }
 
@@ -74,6 +79,7 @@ public class SplashScreen extends Activity {
             public void run() {
                 try {
                     sleep(LIFE_TIME);
+                    binding.progressBar.setVisibility(View.VISIBLE);
                     Intent intent = new Intent(SplashScreen.this,
                             MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
