@@ -1,6 +1,7 @@
 package com.ilya.portfolioproject;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -35,10 +36,28 @@ public class MainActivity extends AppCompatActivity {
     RecyclerAdapter recyclerAdapter;
     List<ArticlesItem> articlesList;
 
+    public static Intent intent(Context context, ArrayList<ArticlesItem> articlesItems){
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra("articlesItems", Parcels.wrap(articlesItems));
+        return intent;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new DataLoader().execute();
+        articlesList = Parcels.unwrap(getIntent().getParcelableExtra("articlesItems"));
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerAdapter = new RecyclerAdapter(MainActivity.this, articlesList, new RecyclerAdapter.OnRecycleCallback() {
+            @Override
+            public void onItemSelect(int position) {
+                Intent intent = new Intent(MainActivity.this, SlideScreenActivity.class);
+                intent.putExtra("articles", Parcels.wrap(articlesList));
+                startActivity(intent);
+            }
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        Drawable divider = ContextCompat.getDrawable(MainActivity.this,R.drawable.item_divider_bottom);
+        recyclerView.addItemDecoration(new ItemDecorator(divider));
+        recyclerView.setAdapter(recyclerAdapter);
     }
 }

@@ -12,19 +12,36 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ilya.portfolioproject.Utils.Constants;
 import com.ilya.portfolioproject.databinding.ActivitySplashscreenBinding;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.Single;
+import rx.SingleSubscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Ilya on 11/2/2016.
  */
 public class SplashScreen extends Activity {
     ActivitySplashscreenBinding binding;
-    Thread splashTread;
-    public static final long LIFE_TIME = 0;
+    public static final long LIFE_TIME = 3500;
 
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -37,7 +54,7 @@ public class SplashScreen extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_splashscreen);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_splashscreen);
         StartAnimations();
     }
 
@@ -74,26 +91,53 @@ public class SplashScreen extends Activity {
             }
         }, 1500);
 
-        splashTread = new Thread() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                try {
-                    sleep(LIFE_TIME);
-                    binding.progressBar.setVisibility(View.VISIBLE);
-                    Intent intent = new Intent(SplashScreen.this,
-                            MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(intent);
-                    SplashScreen.this.finish();
-                } catch (InterruptedException e) {
-                    // do nothing
-                } finally {
-                    SplashScreen.this.finish();
-                }
+                binding.progressBar.setVisibility(View.VISIBLE);
 
+                Single.create(new Single.OnSubscribe<ArrayList<ArticlesItem>>() {
+                    @Override
+                    public void call(SingleSubscriber<? super ArrayList<ArticlesItem>> singleSubscriber) {
+                        singleSubscriber.onSuccess(articlesFromServer());
+                    }
+                })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Action1<ArrayList<ArticlesItem>>() {
+                            @Override
+                            public void call(ArrayList<ArticlesItem> articlesItems) {
+                                startActivity(MainActivity.intent(SplashScreen.this, articlesItems));
+                                SplashScreen.this.finish();
+                            }
+                        });
             }
-        };
-        splashTread.start();
+        }, LIFE_TIME);
 
+
+    }
+
+    private ArrayList<ArticlesItem> articlesFromServer() {
+        ArrayList<ArticlesItem> articlesList = new ArrayList<>();
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(Constants.ARTICLES_LIST).get();
+            Elements articlesElements = doc.getElementsByClass("Main");
+
+            for (Element el : articlesElements) {
+                String title = el.getElementsByClass("Title").text();
+                String id = el.getElementsByClass("Title").select("a").attr("href");
+                String date = el.getElementsByClass("Date").text();
+                String description = el.getElementsByClass("Desc").text();
+                String src = el.select("img").attr("src");
+                String rubrics = el.getElementsByClass("Rubrics").text();
+                articlesList.add(new ArticlesItem(title, date, description, src, rubrics, id));
+            }
+            for (int i = 0; i < 6; i++)
+                articlesList.remove(articlesList.size() - 1);//потому что кто-то криво верстает
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return articlesList;
     }
 }
