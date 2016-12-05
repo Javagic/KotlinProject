@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerAdapter recyclerAdapter;
     List<ArticlesItem> articlesList;
 
-    public static Intent intent(Context context, ArrayList<ArticlesItem> articlesItems){
+    public static Intent intent(Context context, List<ArticlesItem> articlesItems){
         Intent intent = new Intent(context, MainActivity.class);
         intent.putExtra("articlesItems", Parcels.wrap(articlesItems));
         return intent;
